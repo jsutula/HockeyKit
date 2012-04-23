@@ -109,6 +109,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
 @synthesize isAppStoreEnvironment = isAppStoreEnvironment_;
 @synthesize alternativeInstallURL = alternativeInstallURL_;
 @synthesize useAlternativeInstallURL = useAlternativeInstallURL_;
+@synthesize basicAuthUsername = basicAuthUsername_;
+@synthesize basicAuthPassword = basicAuthPassword_;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -470,6 +472,8 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
   [lastCheck_ release];
   [usageStartTimestamp_ release];
   [authenticationSecret_ release];
+  [basicAuthUsername_ release];
+  [basicAuthPassword_ release];
   
   [super dealloc];
 }
@@ -1063,6 +1067,16 @@ static NSString *kHockeyErrorDomain = @"HockeyErrorDomain";
     [self reportError_:[NSError errorWithDomain:kHockeyErrorDomain code:HockeyAPIServerReturnedEmptyResponse userInfo:
                         [NSDictionary dictionaryWithObjectsAndKeys:@"Server returned an empty response.", NSLocalizedDescriptionKey, nil]]];
   }
+}
+
+// authentication challenge
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+    if (self.basicAuthUsername && self.basicAuthPassword && [challenge previousFailureCount] == 0) {
+        NSURLCredential *newCredential = [NSURLCredential credentialWithUser:self.basicAuthUsername
+                                                                    password:self.basicAuthPassword
+                                                                    persistence:NSURLCredentialPersistenceForSession];
+        [[challenge sender] useCredential:newCredential forAuthenticationChallenge:challenge];  
+    }
 }
 
 

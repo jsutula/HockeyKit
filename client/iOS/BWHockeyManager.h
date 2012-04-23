@@ -214,6 +214,12 @@ typedef enum {
 
 - (NSArray *)apps;
 
+// if hockeykit update URL is protected by basic auth, username to use
+@property (nonatomic, copy) NSString *basicAuthUsername;
+
+// if hockeykit update URL is protected by basic auth, password to use
+@property (nonatomic, copy) NSString *basicAuthPassword;
+
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
